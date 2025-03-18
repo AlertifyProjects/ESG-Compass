@@ -1,4 +1,4 @@
-# ESGCompass Monetization Strategy
+# ESG-Compass Monetization Strategy
 
 ## Business Model
 - SaaS subscription model with tiered pricing
