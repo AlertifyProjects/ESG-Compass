@@ -1,5 +1,5 @@
-import { verify } from 'jsonwebtoken';
-import { User } from '../models';
+const jwt = require('jsonwebtoken');
+const { User } = require('../models');
 
 const protect = async (req, res, next) => {
   let token;
@@ -10,7 +10,7 @@ const protect = async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded = verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id).select('-password');
       next();
     } catch (error) {
@@ -35,4 +35,4 @@ const admin = (req, res, next) => {
   }
 };
 
-export default { protect, admin };
+module.exports = { protect, admin };

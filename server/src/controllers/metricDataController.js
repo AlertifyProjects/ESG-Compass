@@ -1,4 +1,4 @@
-import { MetricData, Metric, Organization } from '../models';
+const { MetricData, Metric, Organization } = require('../models');
 
 // @desc    Create new metric data
 // @route   POST /api/metric-data
@@ -89,20 +89,11 @@ const getMetricData = async (req, res) => {
     filter.location = req.query.location;
   }
 
-  // Get total count for pagination
-    const count = await MetricData.countDocuments(filter);
-  
-  // Apply pagination
-  const metricData = await MetricData.find(filter).skip(req.pagination,skip).limit(req.pagination.limit)
+  const metricData = await MetricData.find(filter)
     .populate('metric', 'name category subcategory unit dataType')
     .populate('organization', 'name');
     
-    res.json({
-      metricData,
-      page: req.pagination.page,
-      pages: Math.ceil(count / req.pagination.limit),
-      total: count
-    });
+  res.json(metricData);
 };
 
 // @desc    Get metric data by ID
@@ -207,7 +198,7 @@ const verifyMetricData = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   createMetricData,
   getMetricData,
   getMetricDataById,

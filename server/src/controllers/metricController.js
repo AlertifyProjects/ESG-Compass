@@ -1,4 +1,4 @@
-import { Metric, Organization } from '../models';
+const { Metric, Organization } = require('../models');
 
 // @desc    Create a new metric
 // @route   POST /api/metrics
@@ -69,18 +69,8 @@ const getMetrics = async (req, res) => {
     filter["frameworks.name"] = req.query.framework;
   }
 
-  // Get total count for pagination
-  const count = await Metric.countDocuments(filter);
-
-  // Apply pagination
-  const metrics = await Metric.find(filter).skip(req.pagination,skip).limit(req.pagination.limit);
-
-  res.json({
-    metrics,
-    page: req.pagination.page,
-    pages: Math.ceil(count / req.pagination.limit),
-    total: count
-  });
+  const metrics = await Metric.find(filter);
+  res.json(metrics);
 };
 
 // @desc    Get metric by ID
@@ -158,7 +148,7 @@ const getMetricsByFramework = async (req, res) => {
   res.json(metrics);
 };
 
-export default {
+module.exports = {
   createMetric,
   getMetrics,
   getMetricById,

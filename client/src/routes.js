@@ -7,31 +7,31 @@ import AuthLayout from './components/layout/AuthLayout';
 
 // Auth pages
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
-// Dashboard pages
+// Dashboard page (this is a key component we need)
 import DashboardPage from './pages/DashboardPage';
 
-// Metrics pages
-import MetricsListPage from './pages/MetricsListPage';
-import MetricEntryPage from './pages/MetricEntryPage';
-import MetricDetailPage from './pages/MetricDetailPage';
+// Create placeholder components for pages we haven't fully implemented yet
+const PlaceholderComponent = ({ title }) => (
+  <div className="placeholder-page">
+    <h1>{title}</h1>
+    <p>This page is under construction.</p>
+  </div>
+);
 
-// Reports pages
-import ReportsListPage from './pages/ReportsListPage';
-import ReportBuilderPage from './pages/ReportBuilderPage';
-import ReportViewPage from './pages/ReportViewPage';
-
-// Organization pages
-import OrganizationProfilePage from './pages/OrganizationProfilePage';
-
-// Admin pages
-import UsersManagementPage from './pages/UsersManagementPage';
-import OrganizationsListPage from './pages/OrganizationsListPage';
-
-// Auth guard for protected routes
-import ProtectedRoute from './components/auth/ProtectedRoute';
+// Create placeholder pages
+const RegisterPage = () => <PlaceholderComponent title="Register" />;
+const ForgotPasswordPage = () => <PlaceholderComponent title="Forgot Password" />;
+const MetricsListPage = () => <PlaceholderComponent title="Metrics List" />;
+const MetricEntryPage = () => <PlaceholderComponent title="Metric Entry" />;
+const MetricDetailPage = () => <PlaceholderComponent title="Metric Detail" />;
+const ReportsListPage = () => <PlaceholderComponent title="Reports List" />;
+const ReportBuilderPage = () => <PlaceholderComponent title="Report Builder" />;
+const ReportViewPage = () => <PlaceholderComponent title="Report View" />;
+const OrganizationProfilePage = () => <PlaceholderComponent title="Organization Profile" />;
+const UsersManagementPage = () => <PlaceholderComponent title="Users Management" />;
+const OrganizationsListPage = () => <PlaceholderComponent title="Organizations List" />;
 
 const AppRoutes = () => {
   return (
@@ -70,8 +70,8 @@ const AppRoutes = () => {
         </Route>
         
         {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

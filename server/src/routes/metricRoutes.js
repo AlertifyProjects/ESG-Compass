@@ -1,10 +1,17 @@
-import { Router } from 'express';
-import { createMetric, getMetrics, getMetricById, updateMetric, deleteMetric, getMetricsByFramework } from '../controllers/metricController';
-import { protect, admin } from '../middleware/authMiddleware';
-import { validate, metricValidation } from '../middleware/validationMiddleware';
-import { paginate } from '../middleware/paginationMiddleware';
+const express = require('express');
+const {
+  createMetric,
+  getMetrics,
+  getMetricById,
+  updateMetric,
+  deleteMetric,
+  getMetricsByFramework
+} = require('../controllers/metricController');
+const { protect, admin } = require('../middleware/authMiddleware');
+const { validate, metricValidation } = require('../middleware/validationMiddleware');
+const { paginate } = require('../middleware/paginationMiddleware');
 
-const router = Router();
+const router = express.Router();
 
 router.route('/')
   .post(protect, validate(metricValidation.create), createMetric)
@@ -18,4 +25,4 @@ router.route('/:id')
   .put(protect, validate(metricValidation.update), updateMetric)
   .delete(protect, deleteMetric);
 
-export default router;
+module.exports = router;

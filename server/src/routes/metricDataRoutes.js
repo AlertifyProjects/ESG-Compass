@@ -1,34 +1,28 @@
-import { Router } from "express";
-import {
+const express = require('express');
+const {
   createMetricData,
   getMetricData,
   getMetricDataById,
   updateMetricData,
   deleteMetricData,
-  verifyMetricData,
-} from "../controllers/metricDataController";
-import { protect, admin } from "../middleware/authMiddleware";
-import {
-  validate,
-  metricDataValidation,
-} from "../middleware/validationMiddleware";
-import { paginate } from '../middleware/paginationMiddleware';
+  verifyMetricData
+} = require('../controllers/metricDataController');
+const { protect, admin } = require('../middleware/authMiddleware');
+const { validate, metricDataValidation } = require('../middleware/validationMiddleware');
+const { paginate } = require('../middleware/paginationMiddleware');
 
-const router = Router();
+const router = express.Router();
 
-router
-  .route("/")
+router.route('/')
   .post(protect, validate(metricDataValidation.create), createMetricData)
   .get(protect, paginate, getMetricData);
 
-router
-  .route("/:id")
+router.route('/:id')
   .get(protect, getMetricDataById)
   .put(protect, validate(metricDataValidation.update), updateMetricData)
   .delete(protect, deleteMetricData);
 
-router
-  .route("/:id/verify")
+router.route('/:id/verify')
   .put(protect, validate(metricDataValidation.verify), verifyMetricData);
 
-export default router;
+module.exports = router;

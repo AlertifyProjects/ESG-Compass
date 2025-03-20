@@ -1,47 +1,47 @@
-import express, { json } from "express";
-import { config } from "dotenv";
-import cors from "cors";
-import connectDB from "./config/database";
-import { errorHandler, notFound } from "./middleware/errorMiddleware";
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const connectDB = require('./config/database');
+const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 // Import routes
-import userRoutes from "./routes/userRoutes";
-import organizationRoutes from "./routes/organizationRoutes";
-import metricRoutes from "./routes/metricRoutes";
-import metricDataRoutes from "./routes/metricDataRoutes";
-import reportRoutes from "./routes/reportRoutes";
+const userRoutes = require('./routes/userRoutes');
+const organizationRoutes = require('./routes/organizationRoutes');
+const metricRoutes = require('./routes/metricRoutes');
+const metricDataRoutes = require('./routes/metricDataRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
-config();
+dotenv.config();
 
 // Connect to database
 connectDB();
 
 const app = express();
 
-// Middleware
-app.use(helmet());
-app.use(cors());
-app.use(json());
+// Security middleware
+app.use(helmet()); // Set security HTTP headers
+app.use(cors()); // Enable CORS
 
 // Development logging
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
 }
 
-// Rate limiting
-app.use("/api", apiLimiter);
-app.use("/api/users/login", loginLimiter);
+// Body parser
+app.use(express.json({ limit: '10kb' })); // Body limit is 10kb
 
 // Routes
-app.use("/api/users", userRoutes);
-app.use("/api/organizations", organizationRoutes);
-app.use("/api/metrics", metricRoutes);
-app.use("/api/metric-data", metricDataRoutes);
-app.use("/api/reports", reportRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/organizations', organizationRoutes);
+app.use('/api/metrics', metricRoutes);
+app.use('/api/metric-data', metricDataRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Default route
-app.get("/", (req, res) => {
-  res.send("ESG-Compass API is running...");
+app.get('/', (req, res) => {
+  res.send('ESGCompass API is running...');
 });
 
 // Error handling middleware

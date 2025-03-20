@@ -1,4 +1,4 @@
-import { Report, Organization, Metric, MetricData } from '../models';
+const { Report, Organization, Metric, MetricData } = require("../models");
 
 // @desc    Create a new report
 // @route   POST /api/reports
@@ -10,14 +10,14 @@ const createReport = async (req, res) => {
     organization,
     framework,
     reportingPeriod,
-    metrics
+    metrics,
   } = req.body;
 
   // Validate organization exists
   const orgExists = await Organization.findById(organization);
   if (!orgExists) {
     res.status(404);
-    throw new Error('Organization not found');
+    throw new Error("Organization not found");
   }
 
   // Validate metrics exist if provided
@@ -38,16 +38,16 @@ const createReport = async (req, res) => {
     framework,
     reportingPeriod,
     metrics: metrics || [],
-    status: 'draft',
+    status: "draft",
     createdBy: req.user._id,
-    lastModifiedBy: req.user._id
+    lastModifiedBy: req.user._id,
   });
 
   if (report) {
     res.status(201).json(report);
   } else {
     res.status(400);
-    throw new Error('Invalid report data');
+    throw new Error("Invalid report data");
   }
 };
 
@@ -57,36 +57,27 @@ const createReport = async (req, res) => {
 const getReports = async (req, res) => {
   // Filter by organization if provided
   const filter = {};
-  
+
   if (req.query.organization) {
     filter.organization = req.query.organization;
   }
-  
+
   // Filter by framework if provided
   if (req.query.framework) {
     filter.framework = req.query.framework;
   }
-  
+
   // Filter by status if provided
   if (req.query.status) {
     filter.status = req.query.status;
   }
 
-  // Get total count for pagination
-  const count = await Report.countDocuments(filter);
+  const reports = await Report.find(filter)
+    .populate("organization", "name")
+    .populate("createdBy", "name")
+    .populate("lastModifiedBy", "name");
 
-  // Apply pagination
-  const reports = await Report.find(filter).skip(req.pagination,skip).limit(req.pagination.limit)
-    .populate('organization', 'name')
-    .populate('createdBy', 'name')
-    .populate('lastModifiedBy', 'name');
-    
-  res.json({
-    reports,
-    page: req.pagination.page,
-    pages: Math.ceil(count / req.pagination.limit),
-    total: count
-  });
+  res.json(reports);
 };
 
 // @desc    Get report by ID
@@ -94,16 +85,16 @@ const getReports = async (req, res) => {
 // @access  Private
 const getReportById = async (req, res) => {
   const report = await Report.findById(req.params.id)
-    .populate('organization', 'name industry size')
-    .populate('createdBy', 'name email')
-    .populate('lastModifiedBy', 'name email')
-    .populate('metrics.metric', 'name category subcategory unit');
-  
+    .populate("organization", "name industry size")
+    .populate("createdBy", "name email")
+    .populate("lastModifiedBy", "name email")
+    .populate("metrics.metric", "name category subcategory unit");
+
   if (report) {
     res.json(report);
   } else {
     res.status(404);
-    throw new Error('Report not found');
+    throw new Error("Report not found");
   }
 };
 
@@ -115,11 +106,13 @@ const updateReport = async (req, res) => {
 
   if (report) {
     // Don't allow updating published reports unless moving to draft
-    if (report.status === 'published' && 
-        req.body.status !== 'draft' && 
-        req.user.role !== 'admin') {
+    if (
+      report.status === "published" &&
+      req.body.status !== "draft" &&
+      req.user.role !== "admin"
+    ) {
       res.status(403);
-      throw new Error('Cannot update published reports');
+      throw new Error("Cannot update published reports");
     }
 
     report.title = req.body.title || report.title;
@@ -127,29 +120,29 @@ const updateReport = async (req, res) => {
     report.framework = req.body.framework || report.framework;
     report.reportingPeriod = req.body.reportingPeriod || report.reportingPeriod;
     report.status = req.body.status || report.status;
-    
+
     if (req.body.metrics) {
       report.metrics = req.body.metrics;
     }
-    
+
     report.lastModifiedBy = req.user._id;
-    
+
     // Add to export history if publishing
-    if (req.body.status === 'published' && report.status !== 'published') {
+    if (req.body.status === "published" && report.status !== "published") {
       if (req.body.publishedUrl) {
         report.publishedUrl = req.body.publishedUrl;
       }
-      
+
       if (req.body.publishedVersion) {
         report.publishedVersion = req.body.publishedVersion;
       }
     }
-    
+
     const updatedReport = await report.save();
     res.json(updatedReport);
   } else {
     res.status(404);
-    throw new Error('Report not found');
+    throw new Error("Report not found");
   }
 };
 
@@ -161,16 +154,16 @@ const deleteReport = async (req, res) => {
 
   if (report) {
     // Don't allow deleting published reports unless admin
-    if (report.status === 'published' && req.user.role !== 'admin') {
+    if (report.status === "published" && req.user.role !== "admin") {
       res.status(403);
-      throw new Error('Cannot delete published reports');
+      throw new Error("Cannot delete published reports");
     }
 
     await report.remove();
-    res.json({ message: 'Report removed' });
+    res.json({ message: "Report removed" });
   } else {
     res.status(404);
-    throw new Error('Report not found');
+    throw new Error("Report not found");
   }
 };
 
@@ -182,24 +175,24 @@ const addReportExport = async (req, res) => {
 
   if (report) {
     const { format, url } = req.body;
-    
+
     if (!format || !url) {
       res.status(400);
-      throw new Error('Format and URL are required');
+      throw new Error("Format and URL are required");
     }
-    
+
     report.exportHistory.push({
       format,
       url,
       createdAt: Date.now(),
-      createdBy: req.user._id
+      createdBy: req.user._id,
     });
-    
+
     const updatedReport = await report.save();
     res.json(updatedReport);
   } else {
     res.status(404);
-    throw new Error('Report not found');
+    throw new Error("Report not found");
   }
 };
 
@@ -208,47 +201,48 @@ const addReportExport = async (req, res) => {
 // @access  Private
 const getReportData = async (req, res) => {
   const report = await Report.findById(req.params.id)
-    .populate('organization', 'name industry size')
-    .populate('metrics.metric', 'name category subcategory unit dataType');
-  
+    .populate("organization", "name industry size")
+    .populate("metrics.metric", "name category subcategory unit dataType");
+
   if (report) {
     // For each metric in the report, get the latest metric data
     const reportData = {
       ...report.toObject(),
-      metricData: []
+      metricData: [],
     };
-    
+
     for (const metricItem of report.metrics) {
       if (metricItem.included) {
         const data = await MetricData.findOne({
           metric: metricItem.metric._id,
           organization: report.organization._id,
-          'period.startDate': { $gte: report.reportingPeriod.startDate },
-          'period.endDate': { $lte: report.reportingPeriod.endDate }
-        }).sort({ 'period.endDate': -1 });
-        
+          "period.startDate": { $gte: report.reportingPeriod.startDate },
+          "period.endDate": { $lte: report.reportingPeriod.endDate },
+        }).sort({ "period.endDate": -1 });
+
         if (data) {
           reportData.metricData.push({
             metric: metricItem.metric,
-            data
+            data,
           });
         }
       }
     }
-    
+
     res.json(reportData);
   } else {
     res.status(404);
-    throw new Error('Report not found');
+    throw new Error("Report not found");
   }
 };
 
-export default {
+module.exports = {
   createReport,
   getReports,
   getReportById,
   updateReport,
   deleteReport,
   addReportExport,
-  getReportData
+  getReportData,
 };
+

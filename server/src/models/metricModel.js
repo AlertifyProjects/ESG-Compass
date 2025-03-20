@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
 
-const metricSchema = Schema(
+const metricSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -31,7 +31,7 @@ const metricSchema = Schema(
       default: false,
     },
     organization: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',
     }, // Only set if isCustom is true
   },
@@ -40,5 +40,5 @@ const metricSchema = Schema(
   }
 );
 
-const Metric = model('Metric', metricSchema);
-export default Metric;
+const Metric = mongoose.model('Metric', metricSchema);
+module.exports = Metric;

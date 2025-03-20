@@ -1,181 +1,181 @@
-import { object, string, number, boolean, array, required, optional, alternatives, date } from 'joi';
+const Joi = require('joi');
 
 // User validation schemas
 const userValidation = {
-  register: object({
-    name: string().required(),
-    email: string().email().required(),
-    password: string().min(6).required(),
-    role: string().valid('admin', 'editor', 'viewer'),
-    organization: string().required()
+  register: Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    role: Joi.string().valid('admin', 'editor', 'viewer'),
+    organization: Joi.string().required()
   }),
-  login: object({
-    email: string().email().required(),
-    password: string().required()
+  login: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
   }),
-  update: object({
-    name: string(),
-    email: string().email(),
-    password: string().min(6)
+  update: Joi.object({
+    name: Joi.string(),
+    email: Joi.string().email(),
+    password: Joi.string().min(6)
   })
 };
 
 // Organization validation schemas
 const organizationValidation = {
-  create: object({
-    name: string().required(),
-    industry: string().required(),
-    size: string().valid('small', 'medium', 'large', 'enterprise').required(),
-    headquarters: object({
-      country: string(),
-      city: string()
+  create: Joi.object({
+    name: Joi.string().required(),
+    industry: Joi.string().required(),
+    size: Joi.string().valid('small', 'medium', 'large', 'enterprise').required(),
+    headquarters: Joi.object({
+      country: Joi.string(),
+      city: Joi.string()
     }),
-    foundingYear: number().integer(),
-    publiclyTraded: boolean(),
-    stockSymbol: string(),
-    subscriptionTier: string().valid('starter', 'professional', 'enterprise'),
-    activeFrameworks: array().items(
-      string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom')
+    foundingYear: Joi.number().integer(),
+    publiclyTraded: Joi.boolean(),
+    stockSymbol: Joi.string(),
+    subscriptionTier: Joi.string().valid('starter', 'professional', 'enterprise'),
+    activeFrameworks: Joi.array().items(
+      Joi.string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom')
     )
   }),
-  update: object({
-    name: string(),
-    industry: string(),
-    size: string().valid('small', 'medium', 'large', 'enterprise'),
-    headquarters: object({
-      country: string(),
-      city: string()
+  update: Joi.object({
+    name: Joi.string(),
+    industry: Joi.string(),
+    size: Joi.string().valid('small', 'medium', 'large', 'enterprise'),
+    headquarters: Joi.object({
+      country: Joi.string(),
+      city: Joi.string()
     }),
-    foundingYear: number().integer(),
-    publiclyTraded: boolean(),
-    stockSymbol: string(),
-    subscriptionTier: string().valid('starter', 'professional', 'enterprise'),
-    subscriptionStatus: string().valid('active', 'trialing', 'past_due', 'canceled'),
-    activeFrameworks: array().items(
-      string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom')
+    foundingYear: Joi.number().integer(),
+    publiclyTraded: Joi.boolean(),
+    stockSymbol: Joi.string(),
+    subscriptionTier: Joi.string().valid('starter', 'professional', 'enterprise'),
+    subscriptionStatus: Joi.string().valid('active', 'trialing', 'past_due', 'canceled'),
+    activeFrameworks: Joi.array().items(
+      Joi.string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom')
     )
   })
 };
 
 // Metric validation schemas
 const metricValidation = {
-  create: object({
-    name: string().required(),
-    description: string(),
-    category: string().valid('environmental', 'social', 'governance').required(),
-    subcategory: string(),
-    unit: string(),
-    frameworks: array().items(
-      object({
-        name: string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom').required(),
-        identifier: string()
+  create: Joi.object({
+    name: Joi.string().required(),
+    description: Joi.string(),
+    category: Joi.string().valid('environmental', 'social', 'governance').required(),
+    subcategory: Joi.string(),
+    unit: Joi.string(),
+    frameworks: Joi.array().items(
+      Joi.object({
+        name: Joi.string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom').required(),
+        identifier: Joi.string()
       })
     ),
-    dataType: string().valid('number', 'boolean', 'text', 'date', 'percentage'),
-    isCustom: boolean(),
-    organization: string().when('isCustom', {
+    dataType: Joi.string().valid('number', 'boolean', 'text', 'date', 'percentage'),
+    isCustom: Joi.boolean(),
+    organization: Joi.string().when('isCustom', {
       is: true,
-      then: required(),
-      otherwise: optional()
+      then: Joi.required(),
+      otherwise: Joi.optional()
     })
   }),
-  update: object({
-    name: string(),
-    description: string(),
-    category: string().valid('environmental', 'social', 'governance'),
-    subcategory: string(),
-    unit: string(),
-    frameworks: array().items(
-      object({
-        name: string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom'),
-        identifier: string()
+  update: Joi.object({
+    name: Joi.string(),
+    description: Joi.string(),
+    category: Joi.string().valid('environmental', 'social', 'governance'),
+    subcategory: Joi.string(),
+    unit: Joi.string(),
+    frameworks: Joi.array().items(
+      Joi.object({
+        name: Joi.string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom'),
+        identifier: Joi.string()
       })
     ),
-    dataType: string().valid('number', 'boolean', 'text', 'date', 'percentage')
+    dataType: Joi.string().valid('number', 'boolean', 'text', 'date', 'percentage')
   })
 };
 
 // Metric data validation schemas
 const metricDataValidation = {
-  create: object({
-    metric: string().required(),
-    organization: string().required(),
-    value: alternatives().try(
-      number(),
-      boolean(),
-      string(),
-      date()
+  create: Joi.object({
+    metric: Joi.string().required(),
+    organization: Joi.string().required(),
+    value: Joi.alternatives().try(
+      Joi.number(),
+      Joi.boolean(),
+      Joi.string(),
+      Joi.date()
     ).required(),
-    unit: string(),
-    period: object({
-      startDate: date().required(),
-      endDate: date().required()
+    unit: Joi.string(),
+    period: Joi.object({
+      startDate: Joi.date().required(),
+      endDate: Joi.date().required()
     }).required(),
-    location: string(),
-    dataSource: string().valid('manual', 'import', 'integration', 'calculation'),
-    notes: string()
+    location: Joi.string(),
+    dataSource: Joi.string().valid('manual', 'import', 'integration', 'calculation'),
+    notes: Joi.string()
   }),
-  update: object({
-    value: alternatives().try(
-      number(),
-      boolean(),
-      string(),
-      date()
+  update: Joi.object({
+    value: Joi.alternatives().try(
+      Joi.number(),
+      Joi.boolean(),
+      Joi.string(),
+      Joi.date()
     ),
-    unit: string(),
-    period: object({
-      startDate: date(),
-      endDate: date()
+    unit: Joi.string(),
+    period: Joi.object({
+      startDate: Joi.date(),
+      endDate: Joi.date()
     }),
-    location: string(),
-    dataSource: string().valid('manual', 'import', 'integration', 'calculation'),
-    notes: string()
+    location: Joi.string(),
+    dataSource: Joi.string().valid('manual', 'import', 'integration', 'calculation'),
+    notes: Joi.string()
   }),
-  verify: object({
-    verificationStatus: string().valid('unverified', 'internal_review', 'external_audit', 'verified').required(),
-    notes: string()
+  verify: Joi.object({
+    verificationStatus: Joi.string().valid('unverified', 'internal_review', 'external_audit', 'verified').required(),
+    notes: Joi.string()
   })
 };
 
 // Report validation schemas
 const reportValidation = {
-  create: object({
-    title: string().required(),
-    description: string(),
-    organization: string().required(),
-    framework: string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom').required(),
-    reportingPeriod: object({
-      startDate: date().required(),
-      endDate: date().required()
+  create: Joi.object({
+    title: Joi.string().required(),
+    description: Joi.string(),
+    organization: Joi.string().required(),
+    framework: Joi.string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom').required(),
+    reportingPeriod: Joi.object({
+      startDate: Joi.date().required(),
+      endDate: Joi.date().required()
     }).required(),
-    metrics: array().items(
-      object({
-        metric: string().required(),
-        included: boolean().default(true)
+    metrics: Joi.array().items(
+      Joi.object({
+        metric: Joi.string().required(),
+        included: Joi.boolean().default(true)
       })
     )
   }),
-  update: object({
-    title: string(),
-    description: string(),
-    framework: string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom'),
-    reportingPeriod: object({
-      startDate: date(),
-      endDate: date()
+  update: Joi.object({
+    title: Joi.string(),
+    description: Joi.string(),
+    framework: Joi.string().valid('GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom'),
+    reportingPeriod: Joi.object({
+      startDate: Joi.date(),
+      endDate: Joi.date()
     }),
-    status: string().valid('draft', 'in_progress', 'review', 'published'),
-    metrics: array().items(
-      object({
-        metric: string().required(),
-        included: boolean().default(true)
+    status: Joi.string().valid('draft', 'in_progress', 'review', 'published'),
+    metrics: Joi.array().items(
+      Joi.object({
+        metric: Joi.string().required(),
+        included: Joi.boolean().default(true)
       })
     ),
-    publishedUrl: string(),
-    publishedVersion: string()
+    publishedUrl: Joi.string(),
+    publishedVersion: Joi.string()
   }),
-  export: object({
-    format: string().valid('pdf', 'excel', 'csv', 'html').required(),
-    url: string().required()
+  export: Joi.object({
+    format: Joi.string().valid('pdf', 'excel', 'csv', 'html').required(),
+    url: Joi.string().required()
   })
 };
 
@@ -189,7 +189,7 @@ const validate = (schema) => (req, res, next) => {
   next();
 };
 
-export default {
+module.exports = {
   validate,
   userValidation,
   organizationValidation,

@@ -1,7 +1,7 @@
-import { Schema, model } from "mongoose";
-import { genSalt, hash, compare } from "bcryptjs";
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-const userSchema = Schema(
+const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -19,12 +19,12 @@ const userSchema = Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "editor", "viewer"],
-      default: "viewer",
+      enum: ['admin', 'editor', 'viewer'],
+      default: 'viewer',
     },
     organization: {
-      type: Schema.Types.ObjectId,
-      ref: "Organization",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Organization',
       required: true,
     },
   },
@@ -34,18 +34,18 @@ const userSchema = Schema(
 );
 
 // Password hashing middleware
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
     next();
   }
-  const salt = await genSalt(10);
-  this.password = await hash(this.password, salt);
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Method to check password validity
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = model("User", userSchema);
-export default User;
+const User = mongoose.model('User', userSchema);
+module.exports = User;

@@ -1,39 +1,23 @@
-import { Router } from "express";
-import {
+const express = require('express');
+const {
   createOrganization,
   getOrganizations,
   getOrganizationById,
   updateOrganization,
   deleteOrganization,
-} from "../controllers/organizationController";
-import { protect, admin } from "../middleware/authMiddleware";
-import {
-  validate,
-  organisazationValidation,
-} from "../middleware/validationMiddleware";
-import{paginate}from'../middleware/paginationMiddleware';
+} = require('../controllers/organizationController');
+const { protect, admin } = require('../middleware/authMiddleware');
+const { validate, organizationValidation } = require('../middleware/validationMiddleware');
 
-const router = Router();
+const router = express.Router();
 
-router
-  .route("/")
-  .post(
-    protect,
-    admin,
-    validate(organisazationValidation.create),
-    createOrganization
-  )
-  .get(protect, paginate, admin, getOrganizations);
+router.route('/')
+  .post(protect, admin, validate(organizationValidation.create), createOrganization)
+  .get(protect, admin, getOrganizations);
 
-router
-  .route("/:id")
+router.route('/:id')
   .get(protect, getOrganizationById)
-  .put(
-    protect,
-    admin,
-    validate(organisazationValidation.update),
-    updateOrganization
-  )
+  .put(protect, admin, validate(organizationValidation.update), updateOrganization)
   .delete(protect, admin, deleteOrganization);
 
-export default router;
+module.exports = router;

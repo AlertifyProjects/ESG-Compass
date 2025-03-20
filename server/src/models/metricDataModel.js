@@ -1,19 +1,19 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
 
-const metricDataSchema = Schema(
+const metricDataSchema = mongoose.Schema(
   {
     metric: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Metric',
       required: true,
     },
     organization: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',
       required: true,
     },
     value: {
-      type: Schema.Types.Mixed,
+      type: mongoose.Schema.Types.Mixed,
       required: true,
     },
     unit: String,
@@ -44,7 +44,7 @@ const metricDataSchema = Schema(
     },
     verifiedBy: {
       user: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
       },
       date: Date,
@@ -68,5 +68,5 @@ metricDataSchema.index(
   { unique: true }
 );
 
-const MetricData = model('MetricData', metricDataSchema);
-export default MetricData;
+const MetricData = mongoose.model('MetricData', metricDataSchema);
+module.exports = MetricData;

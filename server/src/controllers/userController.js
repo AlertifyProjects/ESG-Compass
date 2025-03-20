@@ -1,5 +1,5 @@
-import { User } from '../models';
-import generateToken from '../utils/generateToken';
+const { User } = require('../models');
+const generateToken = require('../utils/generateToken');
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -116,22 +116,6 @@ const updateUserProfile = async (req, res) => {
 const getUsers = async (req, res) => {
   const users = await User.find({});
   res.json(users);
-
-
-  // Get total count for pagination
-  const count = await User.countDocuments(users);
-
-  // Apply pagination
-  const reports = await User.find(users).skip(req.pagination,skip).limit(req.pagination.limit);
-  
-  res.json({
-    users,
-    page: req.pagination.page,
-    pages: Math.ceil(count / req.pagination.limit),
-    total: count
-  });
-
-  
 };
 
 // @desc    Get user by ID
@@ -189,7 +173,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   authUser,
   registerUser,
   getUserProfile,

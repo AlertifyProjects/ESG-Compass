@@ -1,4 +1,4 @@
-import { Organization } from '../models';
+const { Organization } = require('../models');
 
 // @desc    Create a new organization
 // @route   POST /api/organizations
@@ -41,7 +41,6 @@ const createOrganization = async (req, res) => {
 // @access  Private/Admin
 const getOrganizations = async (req, res) => {
   const organizations = await Organization.find({});
-
   res.json(organizations);
 };
 
@@ -102,7 +101,7 @@ const deleteOrganization = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   createOrganization,
   getOrganizations,
   getOrganizationById,

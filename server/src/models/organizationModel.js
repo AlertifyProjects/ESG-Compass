@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+const mongoose = require('mongoose');
 
-const organizationSchema = Schema(
+const organizationSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -12,7 +12,7 @@ const organizationSchema = Schema(
     },
     size: {
       type: String,
-      enum: ["small", "medium", "large", "enterprise"],
+      enum: ['small', 'medium', 'large', 'enterprise'],
       required: true,
     },
     headquarters: {
@@ -27,25 +27,23 @@ const organizationSchema = Schema(
     stockSymbol: String,
     subscriptionTier: {
       type: String,
-      enum: ["starter", "professional", "enterprise"],
-      default: "starter",
+      enum: ['starter', 'professional', 'enterprise'],
+      default: 'starter',
     },
     subscriptionStatus: {
       type: String,
-      enum: ["active", "trialing", "past_due", "canceled"],
-      default: "trialing",
+      enum: ['active', 'trialing', 'past_due', 'canceled'],
+      default: 'trialing',
     },
-    activeFrameworks: [
-      {
-        type: String,
-        enum: ["GRI", "SASB", "TCFD", "CDP", "SFDR", "EU_Taxonomy", "custom"],
-      },
-    ],
+    activeFrameworks: [{
+      type: String,
+      enum: ['GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom'],
+    }],
   },
   {
     timestamps: true,
   }
 );
 
-const Organization = model("Organization", organizationSchema);
-export default Organization;
+const Organization = mongoose.model('Organization', organizationSchema);
+module.exports = Organization;

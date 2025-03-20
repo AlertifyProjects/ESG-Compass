@@ -1,10 +1,18 @@
-import { Router } from 'express';
-import { createReport, getReports, getReportById, updateReport, deleteReport, addReportExport, getReportData } from '../controllers/reportController';
-import { protect, admin } from '../middleware/authMiddleware';
-import {validate, reportValidation } from '../middleware/validationMiddleware';
-import{paginate}from'../middleware/paginationMiddleware';
+const express = require('express');
+const {
+  createReport,
+  getReports,
+  getReportById,
+  updateReport,
+  deleteReport,
+  addReportExport,
+  getReportData
+} = require('../controllers/reportController');
+const { protect, admin } = require('../middleware/authMiddleware');
+const { validate, reportValidation } = require('../middleware/validationMiddleware');
+const { paginate } = require('../middleware/paginationMiddleware');
 
-const router = Router();
+const router = express.Router();
 
 router.route('/')
   .post(protect, validate(reportValidation.create), createReport)
@@ -19,6 +27,6 @@ router.route('/:id/export')
   .post(protect, validate(reportValidation.export), addReportExport);
 
 router.route('/:id/data')
-  .get(protect, paginate, getReportData);
+  .get(protect, getReportData);
 
-export default router;
+module.exports = router;

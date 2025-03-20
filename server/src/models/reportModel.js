@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require("mongoose");
 
-const reportSchema = Schema(
+const reportSchema = mongoose.Schema(
   {
     title: {
       type: String,
@@ -8,13 +8,13 @@ const reportSchema = Schema(
     },
     description: String,
     organization: {
-      type: Schema.Types.ObjectId,
-      ref: 'Organization',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
       required: true,
     },
     framework: {
       type: String,
-      enum: ['GRI', 'SASB', 'TCFD', 'CDP', 'SFDR', 'EU_Taxonomy', 'custom'],
+      enum: ["GRI", "SASB", "TCFD", "CDP", "SFDR", "EU_Taxonomy", "custom"],
       required: true,
     },
     reportingPeriod: {
@@ -29,47 +29,51 @@ const reportSchema = Schema(
     },
     status: {
       type: String,
-      enum: ['draft', 'in_progress', 'review', 'published'],
-      default: 'draft',
+      enum: ["draft", "in_progress", "review", "published"],
+      default: "draft",
     },
-    metrics: [{
-      metric: {
-        type: Schema.Types.ObjectId,
-        ref: 'Metric',
+    metrics: [
+      {
+        metric: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Metric",
+        },
+        included: {
+          type: Boolean,
+          default: true,
+        },
       },
-      included: {
-        type: Boolean,
-        default: true,
-      },
-    }],
+    ],
     createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     lastModifiedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     publishedUrl: String,
     publishedVersion: String,
-    exportHistory: [{
-      format: {
-        type: String,
-        enum: ['pdf', 'excel', 'csv', 'html'],
+    exportHistory: [
+      {
+        format: {
+          type: String,
+          enum: ["pdf", "excel", "csv", "html"],
+        },
+        url: String,
+        createdAt: Date,
+        createdBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
       },
-      url: String,
-      createdAt: Date,
-      createdBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    }],
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-const Report = model('Report', reportSchema);
-export default Report;
+const Report = mongoose.model("Report", reportSchema);
+module.exports = Report;
