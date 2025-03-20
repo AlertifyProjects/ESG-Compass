@@ -89,8 +89,6 @@ const getMetricData = async (req, res) => {
     filter.location = req.query.location;
   }
 
-
-
   // Get total count for pagination
     const count = await MetricData.countDocuments(filter);
   

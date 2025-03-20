@@ -72,12 +72,21 @@ const getReports = async (req, res) => {
     filter.status = req.query.status;
   }
 
-  const reports = await Report.find(filter)
+  // Get total count for pagination
+  const count = await Report.countDocuments(filter);
+
+  // Apply pagination
+  const reports = await Report.find(filter).skip(req.pagination,skip).limit(req.pagination.limit)
     .populate('organization', 'name')
     .populate('createdBy', 'name')
     .populate('lastModifiedBy', 'name');
     
-  res.json(reports);
+  res.json({
+    reports,
+    page: req.pagination.page,
+    pages: Math.ceil(count / req.pagination.limit),
+    total: count
+  });
 };
 
 // @desc    Get report by ID

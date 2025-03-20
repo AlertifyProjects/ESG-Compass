@@ -12,13 +12,14 @@ import {
   validate,
   metricDataValidation,
 } from "../middleware/validationMiddleware";
+import { paginate } from '../middleware/paginationMiddleware';
 
 const router = Router();
 
 router
   .route("/")
   .post(protect, validate(metricDataValidation.create), createMetricData)
-  .get(protect, getMetricData);
+  .get(protect, paginate, getMetricData);
 
 router
   .route("/:id")

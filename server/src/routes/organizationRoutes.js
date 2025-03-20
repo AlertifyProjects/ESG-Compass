@@ -11,6 +11,7 @@ import {
   validate,
   organisazationValidation,
 } from "../middleware/validationMiddleware";
+import{paginate}from'../middleware/paginationMiddleware';
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router
     validate(organisazationValidation.create),
     createOrganization
   )
-  .get(protect, admin, getOrganizations);
+  .get(protect, paginate, admin, getOrganizations);
 
 router
   .route("/:id")

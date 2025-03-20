@@ -1,15 +1,15 @@
-import express, { json } from 'express';
-import { config } from 'dotenv';
-import cors from 'cors';
-import connectDB from './config/database';
-import { errorHandler, notFound } from './middleware/errorMiddleware';
+import express, { json } from "express";
+import { config } from "dotenv";
+import cors from "cors";
+import connectDB from "./config/database";
+import { errorHandler, notFound } from "./middleware/errorMiddleware";
 
 // Import routes
-import userRoutes from './routes/userRoutes';
-import organizationRoutes from './routes/organizationRoutes';
-import metricRoutes from './routes/metricRoutes';
-import metricDataRoutes from './routes/metricDataRoutes';
-import reportRoutes from './routes/reportRoutes';
+import userRoutes from "./routes/userRoutes";
+import organizationRoutes from "./routes/organizationRoutes";
+import metricRoutes from "./routes/metricRoutes";
+import metricDataRoutes from "./routes/metricDataRoutes";
+import reportRoutes from "./routes/reportRoutes";
 
 config();
 
@@ -19,19 +19,29 @@ connectDB();
 const app = express();
 
 // Middleware
+app.use(helmet());
 app.use(cors());
 app.use(json());
 
+// Development logging
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+// Rate limiting
+app.use("/api", apiLimiter);
+app.use("/api/users/login", loginLimiter);
+
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/organizations', organizationRoutes);
-app.use('/api/metrics', metricRoutes);
-app.use('/api/metric-data', metricDataRoutes);
-app.use('/api/reports', reportRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/organizations", organizationRoutes);
+app.use("/api/metrics", metricRoutes);
+app.use("/api/metric-data", metricDataRoutes);
+app.use("/api/reports", reportRoutes);
 
 // Default route
-app.get('/', (req, res) => {
-  res.send('ESGCompass API is running...');
+app.get("/", (req, res) => {
+  res.send("ESG-Compass API is running...");
 });
 
 // Error handling middleware

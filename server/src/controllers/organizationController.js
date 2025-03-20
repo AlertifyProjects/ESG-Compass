@@ -41,6 +41,7 @@ const createOrganization = async (req, res) => {
 // @access  Private/Admin
 const getOrganizations = async (req, res) => {
   const organizations = await Organization.find({});
+
   res.json(organizations);
 };
 

@@ -11,13 +11,14 @@ import {
 } from "../controllers/userController";
 import { protect, admin } from "../middleware/authMiddleware";
 import { validate, userValidation } from "../middleware/validationMiddleware";
+import{pagination}from'../middleware/paginationMiddleware';
 
 const router = Router();
 
 router
   .route("/")
   .post(protect, admin, validate(userValidation.reister), registerUser)
-  .get(protect, admin, getUsers);
+  .get(protect, pagination, admin, getUsers);
 
 router.post("/login", validate(userValidation.login), authUser);
 
