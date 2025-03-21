@@ -154,7 +154,7 @@ const seedDatabase = async () => {
     console.log(`${createdMetrics.length} standard metrics created`);
 
     // Create admin user
-    const adminPassword = await bcrypt.hash("admin123", 10);
+    const adminPassword = await bcrypt.hash('admin123', 10);
     const adminUser = await User.create({
       name: "Admin User",
       email: "admin@esgcompass.com",
@@ -162,7 +162,22 @@ const seedDatabase = async () => {
       role: "admin",
       organization: createdOrgs[0]._id,
     });
-    console.log(`Admin user created with email: ${adminUser.email}`);
+    const testMatch = await bcrypt.compare('admin123', adminUser.password);
+    console.log(`Test password match: ${testMatch ? 'Yes' : 'No'}`);
+    console.log(`Admin user created with email: ${adminUser.email} and password: admin123, or hashed: ${adminUser.password}`);
+
+    // Create a test user with direct password setting (no middleware)
+    const testUser = new User({
+      name: 'Test User',
+      email: 'test@example.com',
+      password: await bcrypt.hash('password123', 10),
+      role: 'admin',
+      organization: createdOrgs[0]._id
+    });
+
+await testUser.save();
+console.log(`Test user created with email: test@example.com and password: password123`);
+
 
     // Create test users for each organization
     for (const org of createdOrgs) {
